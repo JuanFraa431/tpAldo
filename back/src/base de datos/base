@@ -1,0 +1,70 @@
+CREATE USER IF NOT EXISTS 'TpAldo' @'%' IDENTIFIED BY 'TpAldo';
+GRANT ALL PRIVILEGES ON TpAldo.* TO 'TpAldo' @'%';
+FLUSH PRIVILEGES;
+
+DROP SCHEMA IF EXISTS TpAldo;
+CREATE SCHEMA TpAldo;
+USE TpAldo;
+
+CREATE TABLE clientes (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  nombre VARCHAR(100) NOT NULL,
+  apellido VARCHAR(100) NOT NULL,
+  email VARCHAR(100) UNIQUE NOT NULL,
+  telefono VARCHAR(20)
+);
+
+CREATE TABLE cabanias (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  nombre VARCHAR(100) NOT NULL,
+  ubicacion VARCHAR(200) NOT NULL,
+  capacidad INT NOT NULL
+);
+
+CREATE TABLE reservas (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  fecha_inicio DATE NOT NULL,
+  fecha_fin DATE NOT NULL,
+  id_cliente INT,
+  id_cabania INT,
+  FOREIGN KEY (id_cliente) REFERENCES clientes(id),
+  FOREIGN KEY (id_cabania) REFERENCES cabanias(id)
+);
+
+INSERT INTO clientes (nombre, apellido, email, telefono) VALUES
+('Juan', 'Pérez', 'juan.perez@example.com','12345678' ),
+('María', 'Gómez', 'maria.gomez@example.com','12345678'),
+('Carlos', 'López', 'carlos.lopez@example.com','12345678'),
+('Ana', 'Martínez', 'ana.martinez@example.com','12345678'),
+('Luis', 'Fernández', 'luis.fernandez@example.com','12345678'),
+('Laura', 'Sánchez', 'laura.sanchez@example.com','12345678'),
+('Pedro', 'Ramírez', 'pedro.ramirez@example.com','12345678'),
+('Lucía', 'Torres', 'lucia.torres@example.com','12345678'),
+('Javier', 'Hernández', 'javier.hernandez@example.com','12345678'),
+('Sofía', 'Castro', 'sofia.castro@example.com','12345678');
+
+INSERT INTO cabanias (nombre, capacidad, ubicacion) VALUES
+('Cabaña Lago Azul', 4, 'Lago Azul'),
+('Cabaña Bosque Verde', 6, 'Bosque Verde'),
+('Cabaña Playa Dorada', 2, 'Playa Dorada'),
+('Cabaña Montañas Altas', 5, 'Montañas Altas'),
+('Cabaña Río Sereno', 3, 'Río Sereno'),
+('Cabaña Nieve Blanca', 8, 'Nieve Blanca'),
+('Cabaña Jardín Secreto', 4, 'Jardín Secreto'),
+('Cabaña Sol y Luna', 5, 'Sol y Luna'),
+('Cabaña Paraíso Natural', 2, 'Paraíso Natural'),
+('Cabaña Refugio del Viento', 7, 'Refugio del Viento');
+
+
+INSERT INTO reservas (fecha_inicio, fecha_fin) VALUES
+('2024-01-10', '2024-01-15'),  -- Asignar cliente 1 y cabaña 1
+('2024-01-12', '2024-01-18'),  -- Asignar cliente 2 y cabaña 2
+('2024-01-15', '2024-01-20'),  -- Asignar cliente 3 y cabaña 3
+('2024-01-17', '2024-01-22'),  -- Asignar cliente 4 y cabaña 4
+('2024-01-20', '2024-01-25'),  -- Asignar cliente 5 y cabaña 5
+('2024-01-22', '2024-01-27'),  -- Asignar cliente 6 y cabaña 6
+('2024-01-25', '2024-01-30'),  -- Asignar cliente 7 y cabaña 7
+('2024-01-27', '2024-02-01'),  -- Asignar cliente 8 y cabaña 8
+('2024-02-01', '2024-02-05'),  -- Asignar cliente 9 y cabaña 9
+('2024-02-03', '2024-02-08');  -- Asignar cliente 10 y cabaña 10
+

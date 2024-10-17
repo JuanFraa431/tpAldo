@@ -14,7 +14,7 @@ const CabanaList = ({ cabanas, onEdit, onDelete }) => {
                         </div>
                         <div>
                             <button onClick={() => onEdit(cabana)}>Editar</button>
-                            <button onClick={() => onDelete(cabana.id, '/api/clientes', 'cliente', setClientes)}>Eliminar</button>
+                            <button onClick={() => onDelete(cabana.id, '/api/cabanias', 'cabanias')}>Eliminar</button>
                         </div>
                     </li>
                 ))}

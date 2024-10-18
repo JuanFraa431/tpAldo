@@ -37,6 +37,22 @@ class ReservaRepository {
     await pool.query('DELETE FROM reservas WHERE id = ?', [id]);
     return { message: 'Reserva eliminada' };
   }
+
+  async findClientesByIdReserva(id) {
+    const [clientes] = await pool.query(
+      'SELECT c.* FROM clientes c JOIN reservas r ON c.id = r.id_cliente WHERE r.id = ?',
+      [id]
+    );
+    return clientes;
+  }
+  
+  async findCabaniasByIdReserva(id) {
+    const [cabanias] = await pool.query(
+      'SELECT ca.* FROM cabanias ca JOIN reservas r ON ca.id = r.id_cabania WHERE r.id = ?',
+      [id]
+    );
+    return cabanias;
+  }
 }
 
 module.exports = new ReservaRepository();

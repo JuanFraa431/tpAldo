@@ -17,7 +17,7 @@ const CabanaForm = ({ cabanaEditada, onChange, onCancel, onSave }) => {
             <form
                 onSubmit={(e) => {
                     e.preventDefault();
-                    onSave(); // Llama a la función onSave para guardar los cambios
+                    onSave(cabanaEditada); // Llama a la función onSave pasando el objeto cabanaEditada
                 }}
             >
                 <label>

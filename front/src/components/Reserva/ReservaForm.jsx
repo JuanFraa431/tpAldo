@@ -6,25 +6,57 @@ const ReservaForm = ({ reservaEditada, onChange, onCancel, onSave }) => {
         onChange({ ...reservaEditada, [name]: value });
     };
 
+    const idCabana = reservaEditada.id_cabania || ''; 
+    const idCliente = reservaEditada.id_cliente || ''; 
+    const fechaInicio = reservaEditada.fecha_inicio || '';
+    const fechaFin = reservaEditada.fecha_fin || '';
+
     return (
         <div className="reserva-form">
             <h2>{reservaEditada.id === 0 ? 'Crear Reserva' : 'Editar Reserva'}</h2>
-            <form onSubmit={(e) => { e.preventDefault(); onSave(); }}>
+            <form
+                onSubmit={(e) => {
+                    e.preventDefault();
+                    onSave(reservaEditada);
+                }}
+            >
                 <label>
                     ID Cabaña:
-                    <input type="number" name="id_cabana" value={reservaEditada.id_cabania} onChange={handleChange} required />
+                    <input
+                        type="number"
+                        name="id_cabania" 
+                        value={idCabana} 
+                        onChange={handleChange}
+                    />
                 </label>
                 <label>
                     ID Cliente:
-                    <input type="number" name="id_cliente" value={reservaEditada.id_cliente} onChange={handleChange} required />
+                    <input
+                        type="number"
+                        name="id_cliente"
+                        value={idCliente}
+                        onChange={handleChange}
+                    />
                 </label>
                 <label>
                     Fecha Inicio:
-                    <input type="date" name="fecha_inicio" value={reservaEditada.fecha_inicio} onChange={handleChange} required />
+                    <input
+                        type="date"
+                        name="fecha_inicio"
+                        value={fechaInicio}
+                        onChange={handleChange}
+                        required
+                    />
                 </label>
                 <label>
                     Fecha Fin:
-                    <input type="date" name="fecha_fin" value={reservaEditada.fecha_fin} onChange={handleChange} required />
+                    <input
+                        type="date"
+                        name="fecha_fin"
+                        value={fechaFin}
+                        onChange={handleChange}
+                        required
+                    />
                 </label>
                 <button type="submit">Guardar</button>
                 <button type="button" onClick={onCancel}>Cancelar</button>

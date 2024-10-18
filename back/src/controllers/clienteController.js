@@ -33,6 +33,15 @@ class ClienteController {
         await clienteRepository.eliminar(req.params.id);
         res.json({ message: 'Cliente eliminado' });
     }
+
+    async obtenerReservasPorIdCliente(req, res) {
+        const reservas = await clienteRepository.findReservasByIdCliente(req.params.id);
+        if (reservas) {
+            res.json(reservas);
+        } else {
+            res.status(404).json({ message: 'Reservas no encontradas' });
+        }
+    }
 }
 
 module.exports = new ClienteController();

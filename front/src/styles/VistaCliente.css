@@ -1,136 +1,202 @@
-/* Estilos generales */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+/* VistaCliente.css */
+
+/* Reset básico */
+* {
     margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+}
+
+/* Contenedor general */
+.vista-cliente {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: #f4f4f4;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Botones de categoría */
+.category-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.category-buttons button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.category-buttons button:hover {
+    background-color: #45a049;
+}
+
+/* Campo de búsqueda */
+.busqueda {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.busqueda input {
+    width: 300px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.busqueda input:focus {
+    border-color: #4CAF50;
+}
+
+.busqueda button {
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.busqueda button:hover {
+    background-color: #1E88E5;
+}
+
+/* Mensaje de error */
+.error-message {
+    color: red;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+/* Listas */
+.vista-cliente > div {
+    margin-bottom: 20px;
+}
+
+ul {
+    list-style-type: none;
     padding: 0;
 }
 
-.container {
-    width: 80%;
-    margin: 20px auto;
-    padding: 20px;
+li {
+    padding: 10px;
+    margin: 5px 0;
     background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-h2 {
-    color: #007bbf;
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-/* Estilo para listas */
-.list-container {
-    margin: 20px 0;
-}
-
-.table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-}
-
-.table th,
-.table td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-}
-
-.table th {
-    background-color: #007bbf;
-    color: white;
-}
-
-.table td {
-    background-color: #f9f9f9;
-}
-
-.table tr:hover {
-    background-color: #f1f1f1;
-}
-
-.action-buttons {
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     display: flex;
-    gap: 10px;
+    justify-content: space-between;
+    align-items: center;
 }
 
-button {
-    padding: 8px 12px;
+li button {
+    background-color: #f44336;
+    color: white;
     border: none;
-    border-radius: 4px;
+    padding: 5px 10px;
+    border-radius: 5px;
     cursor: pointer;
-    font-size: 14px;
+    transition: background-color 0.3s ease;
 }
 
-/* Botones de acciones */
-button.edit {
-    background-color: #007bbf;
-    color: white;
+li button:hover {
+    background-color: #d32f2f;
 }
 
-button.delete {
-    background-color: #e74c3c;
-    color: white;
-}
-
-button:hover {
-    opacity: 0.9;
-}
-
-/* Formulario */
-.form-container {
-    margin: 20px 0;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-}
-
-.form-container label {
-    font-weight: bold;
+/* Botón Crear */
+.boton-crear {
     display: block;
-    margin-bottom: 5px;
+    margin: 20px auto;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
-.form-container input[type="text"],
-.form-container input[type="number"] {
+.boton-crear:hover {
+    background-color: #45a049;
+}
+
+/* Formularios */
+form {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+form input,
+form select {
     width: 100%;
     padding: 10px;
-    margin-bottom: 15px;
+    margin: 10px 0;
     border: 1px solid #ddd;
-    border-radius: 4px;
+    border-radius: 5px;
+    outline: none;
+    transition: border-color 0.3s ease;
 }
 
-.form-container button {
+form input:focus,
+form select:focus {
+    border-color: #4CAF50;
+}
+
+form button {
     width: 100%;
-    background-color: #007bbf;
+    background-color: #2196F3;
     color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
-.form-container button.cancel {
-    background-color: #e74c3c;
-    margin-top: 10px;
+form button:hover {
+    background-color: #1E88E5;
 }
 
-/* Responsive */
+/* Responsive Design */
 @media (max-width: 768px) {
-    .container {
-        width: 95%;
+    .busqueda {
+        flex-direction: column;
+        align-items: center;
     }
 
-    .table th,
-    .table td {
-        padding: 8px;
+    .category-buttons {
+        flex-direction: column;
+        gap: 5px;
     }
 
-    button {
-        padding: 6px 10px;
-    }
-
-    .form-container button {
+    .vista-cliente {
         padding: 10px;
+    }
+
+    form {
+        padding: 15px;
     }
 }

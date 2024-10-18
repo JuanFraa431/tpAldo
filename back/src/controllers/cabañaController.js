@@ -33,6 +33,15 @@ class CabañaController {
         await cabañaRepository.eliminar(req.params.id);
         res.json({ message: 'Cabaña eliminada' });
     }
+
+    async findReservasByIdCabana(req, res) {
+        const reservas = await cabañaRepository.findReservasByIdCabana(req.params.id);
+        if (reservas) {
+            res.json(reservas);
+        } else {
+            res.status(404).json({ message: 'Reservas no encontradas' });
+        }
+    }
 }
 
 module.exports = new CabañaController();

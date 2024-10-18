@@ -25,6 +25,14 @@ const VistaCliente = () => {
     const [clienteEditado, setClienteEditado] = useState(null);
     const [reservaEditada, setReservaEditada] = useState(null);
 
+    const [cabanaRelacionada, setCabanaRelacionada] = useState(null);
+    const [clienteRelacionado, setClienteRelacionado] = useState(null);
+    const [reservaRelacionada, setReservaRelacionada] = useState(null);
+
+    // Estado para los IDs de búsqueda
+    const [busquedaId, setBusquedaId] = useState('');
+    const [isFiltered, setIsFiltered] = useState(false); // Nuevo estado para saber si está filtrado
+
     useEffect(() => {
         const loadAllEntities = async () => {
             await loadEntities('/api/cabanias', setCabanas);
@@ -43,6 +51,122 @@ const VistaCliente = () => {
         } catch (error) {
             console.error(`Error fetching data from ${endpoint}:`, error);
             setErrorMessage('Error al cargar los datos.');
+        }
+    };
+
+    const buscarCabanaPorId = async (id) => {
+        try {
+            const cabana = await fetchEntities(`/api/cabanias/${id}`);
+            const reservasCabana = await fetchEntities(`/api/cabanias/${id}/reservas`);
+    
+            setCabanas([cabana]);
+            setReservas(reservasCabana);
+            setClienteRelacionado(null);  // Limpiamos el cliente relacionado
+            setIsFiltered(true);
+        } catch (error) {
+            setErrorMessage('Error al buscar la cabaña.');
+        }
+    };
+    
+    const buscarClientePorId = async (id) => {
+        try {
+            const cliente = await fetchEntities(`/api/clientes/${id}`);
+            const reservasCliente = await fetchEntities(`/api/clientes/${id}/reservas`);
+    
+            setClientes([cliente]);
+            setReservas(reservasCliente);
+            setCabanaRelacionada(null);  // Limpiamos la cabaña relacionada
+            setIsFiltered(true);
+        } catch (error) {
+            setErrorMessage('Error al buscar el cliente.');
+        }
+    };
+    
+    const buscarReservaPorId = async (id) => {
+        try {
+            const [reserva] = await fetchEntities(`/api/reservas/${id}`);
+            console.log("Reserva encontrada:", reserva);
+
+            if (!reserva) {
+                setErrorMessage('No se encontró la reserva.');
+                return;
+            }
+
+            console.log(`ID Cliente: ${reserva.id_cliente}, ID Cabaña: ${reserva.id_cabania}`);
+
+            let cliente = null;
+            let cabana = null;
+
+            // Solicita los datos del cliente si id_cliente no es null
+            if (reserva.id_cliente) {
+                const clienteResponse = await fetchEntities(`/api/clientes/${reserva.id_cliente}`);
+                console.log("Respuesta del cliente:", clienteResponse);
+
+                if (!clienteResponse || Object.keys(clienteResponse).length === 0) {
+                    console.error(`Cliente no encontrado para el ID: ${reserva.id_cliente}`);
+                    setErrorMessage(`Cliente no encontrado para el ID: ${reserva.id_cliente}`);
+                } else {
+                    cliente = clienteResponse; // Extrae el cliente directamente
+                    console.log("Cliente relacionado:", cliente); // Verificar el cliente
+                }
+            }
+
+            // Solicita los datos de la cabaña si id_cabania no es null
+            if (reserva.id_cabania) {
+                const cabanaResponse = await fetchEntities(`/api/cabanias/${reserva.id_cabania}`);
+                console.log("Respuesta de la cabaña:", cabanaResponse);
+
+                if (!cabanaResponse || Object.keys(cabanaResponse).length === 0) {
+                    console.error(`Cabaña no encontrada para el ID: ${reserva.id_cabania}`);
+                    setErrorMessage(`Cabaña no encontrada para el ID: ${reserva.id_cabania}`);
+                } else {
+                    cabana = cabanaResponse; // Extrae la cabaña directamente
+                    console.log("Cabaña relacionada:", cabana); // Verificar la cabaña
+                }
+            }
+
+            // Actualiza los estados con los datos obtenidos
+            setReservas([reserva]);
+            setClienteRelacionado(cliente);
+            setCabanaRelacionada(cabana);
+            setIsFiltered(true); // Asegúrate de que el filtro esté habilitado
+        } catch (error) {
+            console.error("Error al buscar la reserva:", error);
+            setErrorMessage('Error al buscar la reserva.');
+        }
+    };
+    
+    
+    
+    
+    
+    const handleVerTodos = async () => {
+        await loadEntities('/api/cabanias', setCabanas);
+        await loadEntities('/api/clientes', setClientes);
+        await loadEntities('/api/reservas', setReservas);
+    
+        setBusquedaId('');
+        setIsFiltered(false);
+        setCabanaRelacionada(null);
+        setClienteRelacionado(null);
+        setReservaRelacionada(null);
+    };
+
+    const handleBuscar = async () => {
+        if (!busquedaId) return;
+
+        switch (selectedCategory) {
+            case 'cabanas':
+                await buscarCabanaPorId(busquedaId);
+                break;
+            case 'clientes':
+                await buscarClientePorId(busquedaId);
+                break;
+            case 'reservas':
+                await buscarReservaPorId(busquedaId);
+                break;
+            default:
+                setErrorMessage('Selecciona una categoría antes de buscar.');
         }
     };
 
@@ -85,32 +209,50 @@ const VistaCliente = () => {
         switch (selectedCategory) {
             case 'cabanas':
                 return (
-                    <CabanaList
-                        cabanas={cabanas}
-                        onEdit={(cabana) => setCabanaEditada(cabana)}
-                        onDelete={(cabana) => handleEliminar(cabana.id, '/api/cabanias', 'cabaña', setCabanas)}
-                    />
+                    <>
+                        <CabanaList
+                            cabanas={cabanas}
+                            isFiltered={isFiltered} // Pasa isFiltered aquí
+                        />
+                        {isFiltered && reservas.length > 0 && (
+                            <ReservaList reservas={reservas} isFiltered={isFiltered} />
+                        )}
+                    </>
                 );
             case 'clientes':
                 return (
-                    <ClienteList
-                        clientes={clientes}
-                        onEdit={(cliente) => setClienteEditado(cliente)}
-                        onDelete={(cliente) => handleEliminar(cliente.id, '/api/clientes', 'cliente', setClientes)}
-                    />
+                    <>
+                        <ClienteList
+                            clientes={clientes}
+                            isFiltered={isFiltered} // Pasa isFiltered aquí
+                        />
+                        {isFiltered && reservas.length > 0 && (
+                            <ReservaList reservas={reservas} isFiltered={isFiltered} />
+                        )}
+                    </>
                 );
             case 'reservas':
                 return (
-                    <ReservaList
-                        reservas={reservas}
-                        onEdit={(reserva) => setReservaEditada(reserva)}
-                        onDelete={(reserva) => handleEliminar(reserva.id, '/api/reservas', 'reserva', setReservas)}
-                    />
+                    <>
+                        <ReservaList
+                            reservas={reservas}
+                            isFiltered={isFiltered} // Pasa isFiltered aquí
+                        />
+                        {isFiltered && clienteRelacionado && (
+                            <ClienteList clientes={[clienteRelacionado]} isFiltered={isFiltered} />
+                        )}
+                        {isFiltered && cabanaRelacionada && (
+                            <CabanaList cabanas={[cabanaRelacionada]} isFiltered={isFiltered} />
+                        )}
+                    </>
                 );
             default:
                 return <p>Selecciona una categoría para ver los registros.</p>;
         }
     };
+    
+    
+    
 
     return (
         <div className="vista-cliente">
@@ -120,9 +262,24 @@ const VistaCliente = () => {
                 <button onClick={() => setSelectedCategory('clientes')}>Clientes</button>
                 <button onClick={() => setSelectedCategory('reservas')}>Reservas</button>
             </div>
+
+            {selectedCategory && (
+                <div className="busqueda">
+                    <input
+                        type="text"
+                        value={busquedaId}
+                        onChange={(e) => setBusquedaId(e.target.value)}
+                        placeholder="Buscar por ID"
+                    />
+                    <button onClick={handleBuscar}>Buscar</button>
+                    {isFiltered && <button onClick={handleVerTodos}>Ver Todos</button>}
+                </div>
+            )}
+
             <div>{errorMessage && <p className="error-message">{errorMessage}</p>}</div>
             <div>{renderList()}</div>
 
+            {/* Botones para crear */}
             {selectedCategory === 'cabanas' && (
                 <button className='boton-crear' onClick={() => setCabanaEditada({ id: 0, nombre: '', ubicacion:'', capacidad: 0 })}>
                     Crear Cabaña
@@ -141,53 +298,50 @@ const VistaCliente = () => {
                 </button>
             )}
 
+            {/* Formularios para editar/crear */}
             <div>
                 {cabanaEditada && (
                     <CabanaForm
                         cabanaEditada={cabanaEditada}
                         onChange={setCabanaEditada}
                         onCancel={() => setCabanaEditada(null)}
-                        onSave={async () => {
-                            if (cabanaEditada.id === 0) {
-                                await handleCrear(cabanaEditada, '/api/cabanias', setCabanas);
+                        onSave={(cabana) => {
+                            if (cabana.id === 0) {
+                                handleCrear(cabana, '/api/cabanias', setCabanas);
                             } else {
-                                await handleEditar(cabanaEditada, '/api/cabanias', setCabanas);
+                                handleEditar(cabana, '/api/cabanias', setCabanas);
                             }
                             setCabanaEditada(null);
                         }}
                     />
                 )}
-            </div>
 
-            <div>
                 {clienteEditado && (
                     <ClienteForm
                         clienteEditado={clienteEditado}
                         onChange={setClienteEditado}
                         onCancel={() => setClienteEditado(null)}
-                        onSave={async () => {
-                            if (clienteEditado.id === 0) {
-                                await handleCrear(clienteEditado, '/api/clientes', setClientes);
+                        onSave={(cliente) => {
+                            if (cliente.id === 0) {
+                                handleCrear(cliente, '/api/clientes', setClientes);
                             } else {
-                                await handleEditar(clienteEditado, '/api/clientes', setClientes);
+                                handleEditar(cliente, '/api/clientes', setClientes);
                             }
                             setClienteEditado(null);
                         }}
                     />
                 )}
-            </div>
 
-            <div>
                 {reservaEditada && (
                     <ReservaForm
                         reservaEditada={reservaEditada}
                         onChange={setReservaEditada}
                         onCancel={() => setReservaEditada(null)}
-                        onSave={async () => {
-                            if (reservaEditada.id === 0) {
-                                await handleCrear(reservaEditada, '/api/reservas', setReservas);
+                        onSave={(reserva) => {
+                            if (reserva.id === 0) {
+                                handleCrear(reserva, '/api/reservas', setReservas);
                             } else {
-                                await handleEditar(reservaEditada, '/api/reservas', setReservas);
+                                handleEditar(reserva, '/api/reservas', setReservas);
                             }
                             setReservaEditada(null);
                         }}

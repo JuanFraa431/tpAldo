@@ -37,6 +37,11 @@ class CabañaRepository {
         await pool.query('DELETE FROM cabanias WHERE id = ?', [id]);
         return { message: 'Cabaña eliminada' };
     }
+
+    async findReservasByIdCabana(id) {
+        const [reservas] = await pool.query('SELECT * FROM reservas WHERE id_cabania = ?', [id]);
+        return reservas;
+    }
 }
 
 module.exports = new CabañaRepository();

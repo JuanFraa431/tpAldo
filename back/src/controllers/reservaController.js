@@ -33,6 +33,24 @@ class ReservaController {
         await reservaRepository.eliminar(req.params.id);
         res.json({ message: 'Reserva eliminada' });
     }
+
+    async findClientesByIdReserva(req, res) {
+        const clientes = await reservaRepository.findClientesByIdReserva(req.params.id);
+        if (clientes) {
+            res.json(clientes);
+        } else {
+            res.status(404).json({ message: 'Clientes no encontrados' });
+        }
+    }
+
+    async findCabaniasByIdReserva(req, res) {
+        const cabanias = await reservaRepository.findCabaniasByIdReserva(req.params.id);
+        if (cabanias) {
+            res.json(cabanias);
+        } else {
+            res.status(404).json({ message: 'Cabañas no encontradas' });
+        }
+    }
 }
 
 module.exports = new ReservaController();

@@ -1,9 +1,8 @@
 const pool = require('../db');
 
-
 class ClienteRepository {
     async obtenerTodos() {
-        const [clientes]= await pool.query('SELECT * FROM clientes');
+        const [clientes] = await pool.query('SELECT * FROM clientes');
         return clientes;
     }
 
@@ -13,12 +12,12 @@ class ClienteRepository {
     }
 
     async crear(clienteData) {
-        const { nombre, apellido, email, telefono} = clienteData;
+        const { nombre, apellido, email, telefono } = clienteData;
         const result = await pool.query(
             'INSERT INTO clientes (nombre, apellido, email, telefono) VALUES (?, ?, ?, ?)',
             [nombre, apellido, email, telefono]
         );
-        console.log(clienteData)
+        console.log(clienteData);
         return result;
     }
 
@@ -38,6 +37,14 @@ class ClienteRepository {
     async eliminar(id) {
         await pool.query('DELETE FROM clientes WHERE id = ?', [id]);
         return { message: 'Cliente eliminado' };
+    }
+
+    async findReservasByIdCliente(id) {
+        const [reservas] = await pool.query(
+            'SELECT r.* FROM reservas r JOIN clientes c ON r.id_cliente = c.id WHERE c.id = ?',
+            [id]
+        );
+        return reservas;
     }
 }
 

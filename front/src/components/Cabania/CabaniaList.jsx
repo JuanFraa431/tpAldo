@@ -1,38 +1,34 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 const CabanaList = ({ cabanas, onEdit, onDelete, isFiltered }) => {
-    const [cabanasState, setCabanasState] = React.useState(cabanas);
+    const [cabanasState, setCabanasState] = useState([]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         setCabanasState(cabanas);
     }, [cabanas]);
 
-    if (cabanas.length === 0) {
-        return <p>No hay cabañas para mostrar.</p>;
-    }
+    if (!cabanasState.length) return <p>No hay cabañas para mostrar.</p>;
+
+    const renderCabanaItem = (cabana) => (
+        <li key={`${cabana.id}-${cabana.nombre}`} className="cabana-item">
+            <div>
+                <strong>Nombre:</strong> {cabana.nombre} <br />
+                <strong>Ubicación:</strong> {cabana.ubicacion} <br />
+                <strong>Capacidad:</strong> {cabana.capacidad} personas
+            </div>
+            {!isFiltered && (
+                <div>
+                    <button onClick={() => onEdit(cabana)}>Editar</button>
+                    <button onClick={() => onDelete(cabana)}>Eliminar</button>
+                </div>
+            )}
+        </li>
+    );
 
     return (
-
-        
         <div className="cabana-list">
             <h2>Lista de Cabañas</h2>
-            <ul>
-                {cabanasState.map((cabana) => (
-                    <li key={`${cabana.id}-${cabana.nombre}`} className="cabana-item">
-                        <div>
-                            <strong>Nombre:</strong> {cabana.nombre} <br />
-                            <strong>Ubicacion:</strong> {cabana.ubicacion} <br />
-                            <strong>Capacidad:</strong> {cabana.capacidad} personas
-                        </div>
-                        {!isFiltered && (
-                            <div>
-                                <button onClick={() => onEdit(cabana)}>Editar</button>
-                                <button onClick={() => onDelete(cabana)}>Eliminar</button>
-                            </div>
-                        )}
-                    </li>
-                ))}
-            </ul>
+            <ul>{cabanasState.map(renderCabanaItem)}</ul>
         </div>
     );
 };

@@ -29,9 +29,9 @@ const VistaCliente = () => {
     const [clienteRelacionado, setClienteRelacionado] = useState(null);
     const [reservaRelacionada, setReservaRelacionada] = useState(null);
 
-    // Estado para los IDs de búsqueda
+
     const [busquedaId, setBusquedaId] = useState('');
-    const [isFiltered, setIsFiltered] = useState(false); // Nuevo estado para saber si está filtrado
+    const [isFiltered, setIsFiltered] = useState(false); 
 
     useEffect(() => {
         const loadAllEntities = async () => {
@@ -57,84 +57,86 @@ const VistaCliente = () => {
     const buscarCabanaPorId = async (id) => {
         try {
             const cabana = await fetchEntities(`/api/cabanias/${id}`);
+    
+            if (!cabana || Object.keys(cabana).length === 0) {
+                setErrorMessage(`No se encontró la cabaña con ID ${id}.`);
+                setCabanas([]);
+                setReservas([]);
+                return;
+            }
+    
             const reservasCabana = await fetchEntities(`/api/cabanias/${id}/reservas`);
     
             setCabanas([cabana]);
             setReservas(reservasCabana);
-            setClienteRelacionado(null);  // Limpiamos el cliente relacionado
+            setClienteRelacionado(null);
             setIsFiltered(true);
+            setErrorMessage(null);
         } catch (error) {
-            setErrorMessage('Error al buscar la cabaña.');
+            console.error('Error al buscar la cabaña:', error);
+            setErrorMessage('Ocurrió un error al buscar la cabaña.');
         }
     };
+    
     
     const buscarClientePorId = async (id) => {
         try {
             const cliente = await fetchEntities(`/api/clientes/${id}`);
+    
+            if (!cliente || Object.keys(cliente).length === 0) {
+                setErrorMessage(`No se encontró el cliente con ID ${id}.`);
+                setClientes([]); 
+                setReservas([]);
+                return;
+            }
+    
             const reservasCliente = await fetchEntities(`/api/clientes/${id}/reservas`);
     
             setClientes([cliente]);
             setReservas(reservasCliente);
-            setCabanaRelacionada(null);  // Limpiamos la cabaña relacionada
-            setIsFiltered(true);
+            setCabanaRelacionada(null); 
+            setIsFiltered(true); 
+            setErrorMessage(null);  
         } catch (error) {
-            setErrorMessage('Error al buscar el cliente.');
+            console.error('Error al buscar el cliente:', error);
+            setErrorMessage('Ocurrió un error al buscar el cliente.');
         }
     };
     
     const buscarReservaPorId = async (id) => {
         try {
             const [reserva] = await fetchEntities(`/api/reservas/${id}`);
-            console.log("Reserva encontrada:", reserva);
-
+    
             if (!reserva) {
-                setErrorMessage('No se encontró la reserva.');
+                setErrorMessage(`No se encontró la reserva con ID ${id}.`);
+                setReservas([]);
+                setClienteRelacionado(null);
+                setCabanaRelacionada(null);
                 return;
             }
-
-            console.log(`ID Cliente: ${reserva.id_cliente}, ID Cabaña: ${reserva.id_cabania}`);
-
+    
             let cliente = null;
             let cabana = null;
-
-            // Solicita los datos del cliente si id_cliente no es null
+    
             if (reserva.id_cliente) {
-                const clienteResponse = await fetchEntities(`/api/clientes/${reserva.id_cliente}`);
-                console.log("Respuesta del cliente:", clienteResponse);
-
-                if (!clienteResponse || Object.keys(clienteResponse).length === 0) {
-                    console.error(`Cliente no encontrado para el ID: ${reserva.id_cliente}`);
-                    setErrorMessage(`Cliente no encontrado para el ID: ${reserva.id_cliente}`);
-                } else {
-                    cliente = clienteResponse; // Extrae el cliente directamente
-                    console.log("Cliente relacionado:", cliente); // Verificar el cliente
-                }
+                cliente = await fetchEntities(`/api/clientes/${reserva.id_cliente}`);
             }
-
-            // Solicita los datos de la cabaña si id_cabania no es null
+    
             if (reserva.id_cabania) {
-                const cabanaResponse = await fetchEntities(`/api/cabanias/${reserva.id_cabania}`);
-                console.log("Respuesta de la cabaña:", cabanaResponse);
-
-                if (!cabanaResponse || Object.keys(cabanaResponse).length === 0) {
-                    console.error(`Cabaña no encontrada para el ID: ${reserva.id_cabania}`);
-                    setErrorMessage(`Cabaña no encontrada para el ID: ${reserva.id_cabania}`);
-                } else {
-                    cabana = cabanaResponse; // Extrae la cabaña directamente
-                    console.log("Cabaña relacionada:", cabana); // Verificar la cabaña
-                }
+                cabana = await fetchEntities(`/api/cabanias/${reserva.id_cabania}`);
             }
-
-            // Actualiza los estados con los datos obtenidos
+    
             setReservas([reserva]);
             setClienteRelacionado(cliente);
             setCabanaRelacionada(cabana);
-            setIsFiltered(true); // Asegúrate de que el filtro esté habilitado
+            setIsFiltered(true);
+            setErrorMessage(null);
         } catch (error) {
-            console.error("Error al buscar la reserva:", error);
-            setErrorMessage('Error al buscar la reserva.');
+            console.error('Error al buscar la reserva:', error);
+            setErrorMessage('Ocurrió un error al buscar la reserva.');
         }
     };
+    
     
     
     
@@ -192,18 +194,18 @@ const VistaCliente = () => {
 
     const handleEliminar = async (id, endpoint, entityName, setState) => {
         const confirmacion = window.confirm(`¿Seguro que deseas eliminar el ${entityName} con id ${id}?`);
-        if (!confirmacion) {
-            return;
-        }
-
+        if (!confirmacion) return;
+    
         try {
             await deleteEntity(endpoint, id);
             await loadEntities(endpoint, setState);
             setErrorMessage(null);
         } catch (error) {
-            setErrorMessage('Error al eliminar la entidad.');
+            console.error(`Error al eliminar el ${entityName}:`, error);
+            setErrorMessage(`Error al eliminar el ${entityName}.`);
         }
     };
+    
 
     const renderList = () => {
         switch (selectedCategory) {
@@ -212,7 +214,9 @@ const VistaCliente = () => {
                     <>
                         <CabanaList
                             cabanas={cabanas}
-                            isFiltered={isFiltered} // Pasa isFiltered aquí
+                            isFiltered={isFiltered}
+                            onEdit={(cabana) => setCabanaEditada(cabana)}
+                            onDelete={(cabana) => handleEliminar(cabana.id, '/api/cabanias', 'cabaña', setCabanas)}
                         />
                         {isFiltered && reservas.length > 0 && (
                             <ReservaList reservas={reservas} isFiltered={isFiltered} />
@@ -224,7 +228,9 @@ const VistaCliente = () => {
                     <>
                         <ClienteList
                             clientes={clientes}
-                            isFiltered={isFiltered} // Pasa isFiltered aquí
+                            isFiltered={isFiltered}
+                            onEdit={(cliente) => setClienteEditado(cliente)}
+                            onDelete={(cliente) => handleEliminar(cliente.id, '/api/clientes', 'cliente', setClientes)}
                         />
                         {isFiltered && reservas.length > 0 && (
                             <ReservaList reservas={reservas} isFiltered={isFiltered} />
@@ -236,7 +242,9 @@ const VistaCliente = () => {
                     <>
                         <ReservaList
                             reservas={reservas}
-                            isFiltered={isFiltered} // Pasa isFiltered aquí
+                            isFiltered={isFiltered}
+                            onEdit={(reserva) => setReservaEditada(reserva)}
+                            onDelete={(reserva) => handleEliminar(reserva.id, '/api/reservas', 'reserva', setReservas)}
                         />
                         {isFiltered && clienteRelacionado && (
                             <ClienteList clientes={[clienteRelacionado]} isFiltered={isFiltered} />
@@ -252,7 +260,7 @@ const VistaCliente = () => {
     };
     
     
-    
+        
 
     return (
         <div className="vista-cliente">
@@ -298,7 +306,6 @@ const VistaCliente = () => {
                 </button>
             )}
 
-            {/* Formularios para editar/crear */}
             <div>
                 {cabanaEditada && (
                     <CabanaForm

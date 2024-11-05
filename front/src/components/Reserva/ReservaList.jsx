@@ -12,7 +12,7 @@ const ReservaList = ({ reservas, onEdit, onDelete, isFiltered }) => {
                 <strong>Fecha Fin:</strong> {reserva.fecha_fin}
             </div>
             {!isFiltered && (
-                <div>
+                <div className="botones-edit-delete">
                     <button onClick={() => onEdit(reserva)}>Editar</button>
                     <button onClick={() => onDelete(reserva)}>Eliminar</button>
                 </div>

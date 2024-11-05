@@ -17,7 +17,7 @@ const CabanaList = ({ cabanas, onEdit, onDelete, isFiltered }) => {
                 <strong>Capacidad:</strong> {cabana.capacidad} personas
             </div>
             {!isFiltered && (
-                <div>
+                <div className="botones-edit-delete">
                     <button onClick={() => onEdit(cabana)}>Editar</button>
                     <button onClick={() => onDelete(cabana)}>Eliminar</button>
                 </div>

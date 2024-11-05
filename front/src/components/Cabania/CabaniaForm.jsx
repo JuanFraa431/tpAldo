@@ -6,7 +6,6 @@ const CabanaForm = ({ cabanaEditada, onChange, onCancel, onSave }) => {
         onChange({ ...cabanaEditada, [name]: value });
     };
 
-    // Asegúrate de que los valores no sean undefined
     const nombre = cabanaEditada.nombre || '';
     const ubicacion = cabanaEditada.ubicacion || '';
     const capacidad = cabanaEditada.capacidad || '';
@@ -17,7 +16,7 @@ const CabanaForm = ({ cabanaEditada, onChange, onCancel, onSave }) => {
             <form
                 onSubmit={(e) => {
                     e.preventDefault();
-                    onSave(cabanaEditada); // Llama a la función onSave pasando el objeto cabanaEditada
+                    onSave(cabanaEditada);
                 }}
             >
                 <label>
@@ -25,7 +24,7 @@ const CabanaForm = ({ cabanaEditada, onChange, onCancel, onSave }) => {
                     <input
                         type="text"
                         name="nombre"
-                        value={nombre} // Usa el valor asegurado
+                        value={nombre}
                         onChange={handleChange}
                         required
                     />
@@ -35,7 +34,7 @@ const CabanaForm = ({ cabanaEditada, onChange, onCancel, onSave }) => {
                     <input
                         type="text"
                         name="ubicacion"
-                        value={ubicacion} // Usa el valor asegurado
+                        value={ubicacion}
                         onChange={handleChange}
                         required
                     />
@@ -45,15 +44,17 @@ const CabanaForm = ({ cabanaEditada, onChange, onCancel, onSave }) => {
                     <input
                         type="number"
                         name="capacidad"
-                        value={capacidad} // Usa el valor asegurado
+                        value={capacidad}
                         onChange={handleChange}
                         required
                     />
                 </label>
-                <button type="submit">Guardar</button>
-                <button type="button" onClick={onCancel}>
-                    Cancelar
-                </button>
+                <div className='save-cancel-button'>
+                    <button type="submit">Guardar</button>
+                    <button type="button" onClick={onCancel} className="cancelar">
+                        Cancelar
+                    </button>
+                </div>
             </form>
         </div>
     );

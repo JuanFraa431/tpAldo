@@ -287,7 +287,6 @@ const VistaCliente = () => {
             <div>{errorMessage && <p className="error-message">{errorMessage}</p>}</div>
             <div>{renderList()}</div>
 
-            {/* Botones para crear */}
             {selectedCategory === 'cabanas' && (
                 <button className='boton-crear' onClick={() => setCabanaEditada({ id: 0, nombre: '', ubicacion:'', capacidad: 0 })}>
                     Crear Cabaña

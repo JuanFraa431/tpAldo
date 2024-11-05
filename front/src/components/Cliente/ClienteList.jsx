@@ -13,7 +13,7 @@ const ClienteList = ({ clientes, onEdit, onDelete, isFiltered }) => {
                 <strong>Teléfono:</strong> {cliente.telefono}
             </div>
             {!isFiltered && (
-                <div>
+                <div className="botones-edit-delete">
                     <button onClick={() => onEdit(cliente)}>Editar</button>
                     <button onClick={() => onDelete(cliente)}>Eliminar</button>
                 </div>

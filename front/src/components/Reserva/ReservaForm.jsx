@@ -58,8 +58,10 @@ const ReservaForm = ({ reservaEditada, onChange, onCancel, onSave }) => {
                         required
                     />
                 </label>
-                <button type="submit">Guardar</button>
-                <button type="button" onClick={onCancel}>Cancelar</button>
+                <div className='save-cancel-button'>
+                    <button type="submit">Guardar</button>
+                    <button type="button" onClick={onCancel} className="cancelar">Cancelar</button>
+                </div>
             </form>
         </div>
     );

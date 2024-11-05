@@ -6,7 +6,6 @@ const ClienteForm = ({ clienteEditado, onChange, onCancel, onSave }) => {
         onChange({ ...clienteEditado, [name]: value });
     };
 
-    // Asegúrate de que los valores no sean undefined
     const nombre = clienteEditado.nombre || '';
     const apellido = clienteEditado.apellido || '';
     const email = clienteEditado.email || '';
@@ -32,8 +31,10 @@ const ClienteForm = ({ clienteEditado, onChange, onCancel, onSave }) => {
                     Teléfono:
                     <input type="tel" name="telefono" value={telefono} onChange={handleChange} required />
                 </label>
-                <button type="submit">Guardar</button>
-                <button type="button" onClick={onCancel}>Cancelar</button>
+                <div className='save-cancel-button'>
+                    <button type="submit">Guardar</button>
+                    <button type="button" onClick={onCancel} className="cancelar">Cancelar</button>
+                </div>
             </form>
         </div>
     );
